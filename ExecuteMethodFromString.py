@@ -2,6 +2,7 @@
 #Objective: read in lines from a file which will include a function to be performed and then the numbers to perform it on, and then execute these commands
 
 import numpy as np
+import math
 
 #read in the lines of the file into 'f'
 f = open('input_Extended.txt','r', encoding='utf-8-sig') #Had to specify the encoding otherwise it printed with strange characters at the start
@@ -17,19 +18,13 @@ for i in f:     #Will iterate through the lines of data in 'f' from the text fil
     func = str(i[0:3]) #reads in the function name
     numString = str(i[4:len(i)+1])  #reads in the numbers which need to be evaluated
     numStringStripped = numString.strip()
-    #numsList[:] = (value for value in numsList if value != "\n")
     numsList = list(numStringStripped.split(","))
-
-    #numsList[:] = (value for value in numsList if value != ",") # the above commands read in the commas between numbers as individual items so these needed to be removed 
-
+    numsList = [int(x) for x in numsList]
     if func[0] == "p":
         percentileValue = int(func[1:3])
         newNumsList = np.array(numsList)
-        print("percentileValue",str(percentileValue))
-        print("newNumsList",str(newNumsList))
-        percentileNum = np.percentile(newNumsList,percentileValue)
-        print("percentileNum",str(percentileNum))
-        print("The ",str(percentileValue),"th percentile of ",str(numsList)," is: ", percentileNum) 
+        percentileNum = np.percentile(newNumsList.astype(int),percentileValue)
+        print("The ",str(percentileValue),"th percentile of ",str(numsList)," is: ", str(percentileNum)) 
     else:
         exec(str("outputCalc = "+func+"("+str(numsList)+")"))       # This will take the values of func and numsList and execute them as functions
         print("The ", func," of ", str(numsList)," is: ", str(outputCalc))
