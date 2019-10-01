@@ -1,32 +1,31 @@
 #Task 20 - Consolidation II - Files
-#Objective: read in lines from a file which will include a function to be performed and then the numbers to perform it on, and then execute these commands
+#Objective: Read in lines from a file which will include a function to be performed and then the numbers to perform it on, and then execute these commands
 
 import numpy as np
-import math
+from statistics import mean
 
-#read in the lines of the file into 'f'
-f = open('input_Extended.txt','r', encoding='utf-8-sig') #Had to specify the encoding otherwise it printed with strange characters at the start
-f.read()
-f.seek(0)   #Necessary in order to start reading from line 1 when we iterate through
+#read in the lines of the file into 'fileReader'
+fileReader = open('input_Extended.txt','r', encoding='utf-8-sig') #Had to specify the encoding in order to be viewed properly
+fileReader.read()
+fileReader.seek(0)   #Necessary in order to start reading from line 1 when we iterate through
 
-#Since an "avg" function doesnt exist we needed to define what this should do
-def avg(lst): # Python program to get average of a list 
-    return sum([int(x) for x in lst]) / len(lst)    #sums the list items and divides by the length of the list
-
-outputCalc = 0
-for i in f:     #Will iterate through the lines of data in 'f' from the text file 
-    func = str(i[0:3]) #reads in the function name
+for i in fileReader:     #Will iterate through the lines of data in 'f' from the text file 
+    functionName = str(i[0:3]) #reads in the function name
+    
     numString = str(i[4:len(i)+1])  #reads in the numbers which need to be evaluated
-    numStringStripped = numString.strip()
-    numsList = list(numStringStripped.split(","))
-    numsList = [int(x) for x in numsList]
-    if func[0] == "p":
-        percentileValue = int(func[1:3])
+    numString = numString.strip()   #Strip all empty spaces or newline/(\n) characters
+    numsList = list(numString.split(","))   #Split out numbers into a list
+    numsList = [int(x) for x in numsList]   #Cast all numbers to int
+    
+    if functionName[0] == "p":  #Lines requiring percentile calculations start with a p
+        percentileValue = int(functionName[1:3])
         newNumsList = np.array(numsList)
-        percentileNum = np.percentile(newNumsList.astype(int),percentileValue)
+        percentileNum = np.percentile(newNumsList,percentileValue)
         print("The ",str(percentileValue),"th percentile of ",str(numsList)," is: ", str(percentileNum)) 
     else:
-        exec(str("outputCalc = "+func+"("+str(numsList)+")"))       # This will take the values of func and numsList and execute them as functions
-        print("The ", func," of ", str(numsList)," is: ", str(outputCalc))
+        if functionName == "avg":
+            functionName = "mean"  #To find an average I will use the mean function so need to change this function name
+        exec(str("outputCalc = "+functionName+"("+str(numsList)+")"))       # This will take the values of functionName and numsList and execute them as functions
+        print("The ", functionName," of ", str(numsList)," is: ", str(outputCalc))
 
-f.close()
+fileReader.close()
